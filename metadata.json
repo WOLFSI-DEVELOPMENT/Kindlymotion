@@ -1,0 +1,6 @@
+{
+  "name": "fyllo motion",
+  "description": "Create motion videos from prompts with uploaded images, audio, and AI-generated assets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
