@@ -12,6 +12,18 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes input-glow-drift {
+  0% {
+    transform: translateX(-18%) scaleX(0.96);
+  }
+  50% {
+    transform: translateX(18%) scaleX(1.04);
+  }
+  100% {
+    transform: translateX(-18%) scaleX(0.96);
+  }
+}
+
 @utility animate-smoke {
   background: linear-gradient(-45deg, #18181b, #27272a, #111827, #1f2937);
   background-size: 400% 400%;
@@ -28,3 +40,27 @@ body {
   corner-shape: squircle; 
 }
 
+.input-glow-track {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -14px;
+  height: 54px;
+  overflow: hidden;
+  pointer-events: none;
+  filter: blur(22px);
+  opacity: 0.95;
+}
+
+.input-glow-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(38% 120% at 14% 60%, rgba(0, 82, 255, 0.95) 0%, rgba(0, 82, 255, 0) 72%),
+    radial-gradient(30% 120% at 36% 45%, rgba(0, 194, 255, 0.85) 0%, rgba(0, 194, 255, 0) 74%),
+    radial-gradient(28% 120% at 60% 52%, rgba(235, 214, 255, 0.78) 0%, rgba(235, 214, 255, 0) 68%),
+    radial-gradient(36% 120% at 84% 55%, rgba(120, 0, 255, 0.92) 0%, rgba(120, 0, 255, 0) 74%);
+  mix-blend-mode: screen;
+  animation: input-glow-drift 4.6s ease-in-out infinite;
+}
