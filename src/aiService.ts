@@ -18,7 +18,7 @@ export interface ContextAsset {
   data: string; // base64 string
 }
 
-export type GeminiVideoModel = 'gemini-2.5-flash-lite' | 'gemini-3-flash-preview' | 'gemini-3-pro-preview';
+export type GeminiVideoModel = 'gemini-3.1-flash-lite-preview' | 'gemini-3-flash-preview' | 'gemini-3.1-pro-preview';
 
 function writeString(view: DataView, offset: number, string: string) {
   for (let i = 0; i < string.length; i++) {
