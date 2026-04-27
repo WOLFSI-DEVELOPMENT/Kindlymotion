@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { Player } from '@remotion/player';
 import { renderMediaOnWeb } from '@remotion/web-renderer';
 import { Loader2, Plus, ArrowRight, Image as ImageIcon, Download, ChevronDown, Smartphone, Monitor, Upload, Search, AudioLines, Sparkles, ArrowLeft, X, Wand2 } from 'lucide-react';
-import { generateVideoScript, compileVideoComponent, GeneratedVideoConfig } from './aiService';
+import { generateVideoScript, compileVideoComponent, GeneratedVideoConfig, GeminiVideoModel } from './aiService';
 
 interface GeneratedVideo {
   id: string;
@@ -27,6 +27,17 @@ interface UploadedAsset {
   name: string;
   data?: string; // base64 payload
 }
+
+type ModelOption = {
+  label: string;
+  value: GeminiVideoModel;
+};
+
+const MODEL_OPTIONS: ModelOption[] = [
+  { label: 'Gemini 2.5 Flash Lite', value: 'gemini-2.5-flash-lite' },
+  { label: 'Gemini 3 Flash', value: 'gemini-3-flash-preview' },
+  { label: 'Gemini 3 Pro', value: 'gemini-3-pro-preview' },
+];
 
 const PixelDotsVisualizer = ({ activeTab }: { activeTab: 'image' | 'audio' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -110,7 +121,7 @@ export default function App() {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [generations, setGenerations] = useState(1);
-  const [model, setModel] = useState('Gemini 3 Flash');
+  const [model, setModel] = useState<ModelOption>(MODEL_OPTIONS[1]);
   const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
   const [isAssetPickerOpen, setIsAssetPickerOpen] = useState(false);
@@ -440,7 +451,7 @@ export default function App() {
         .filter(a => selectedContextIds.includes(a.id) && a.data)
         .map(a => ({ type: a.type, data: a.data! }));
 
-      const config = await generateVideoScript(prompt, contextAssets);
+      const config = await generateVideoScript(prompt, contextAssets, model.value);
       
       let videoContextAssets = uploadedAssets
         .filter(a => selectedContextIds.includes(a.id))
@@ -658,13 +669,19 @@ export default function App() {
             ))}
           </div>
         )}
-        <form 
-          onSubmit={handleGenerate}
-          className="flex flex-col justify-center bg-[#18181A] p-2 pl-4 border border-white/5 shadow-2xl relative transition-all super-pill-medium"
-          style={{ 
-            minHeight: '90px'
-          }}
-        >
+        <div className="relative">
+          {isGenerating && (
+            <div className="input-glow-track z-0" aria-hidden="true">
+              <div className="input-glow-wave" />
+            </div>
+          )}
+          <form 
+            onSubmit={handleGenerate}
+            className="flex flex-col justify-center bg-[#18181A] p-2 pl-4 border border-white/5 shadow-2xl relative transition-all super-pill-medium z-10"
+            style={{ 
+              minHeight: '90px'
+            }}
+          >
           <input
             type="text"
             value={prompt}
@@ -948,20 +965,20 @@ export default function App() {
                         onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
                         className={`w-full bg-[#202020] hover:bg-[#2A2A2A] text-white font-bold rounded-[18px] h-[52px] px-5 text-[15px] flex items-center justify-between transition-colors ${isModelDropdownOpen ? 'bg-[#2A2A2A]' : ''}`}
                       >
-                        {model}
+                        {model.label}
                         <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] border-t-white ml-2 opacity-80" />
                       </button>
 
                       {isModelDropdownOpen && (
                         <div className="absolute bottom-[calc(100%+8px)] left-0 w-full bg-[#181818] border border-[#2A2A2A] rounded-[22px] p-2 flex flex-col shadow-2xl z-50 overflow-hidden">
-                          {['Gemini 3.1 Flash Lite', 'Gemini 3 Flash', 'Gemini Pro'].map((m) => (
+                          {MODEL_OPTIONS.map((m) => (
                             <button
-                              key={m}
+                              key={m.value}
                               type="button"
                               onClick={() => { setModel(m); setIsModelDropdownOpen(false); }}
-                              className={`text-left px-5 py-4 rounded-[16px] text-[15px] font-bold transition-colors ${model === m ? 'bg-[#333] text-white' : 'text-gray-300 hover:bg-[#202020] hover:text-white'}`}
+                              className={`text-left px-5 py-4 rounded-[16px] text-[15px] font-bold transition-colors ${model.value === m.value ? 'bg-[#333] text-white' : 'text-gray-300 hover:bg-[#202020] hover:text-white'}`}
                             >
-                              {m}
+                              {m.label}
                             </button>
                           ))}
                         </div>
@@ -984,7 +1001,8 @@ export default function App() {
               </button>
             </div>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
