@@ -34,9 +34,9 @@ type ModelOption = {
 };
 
 const MODEL_OPTIONS: ModelOption[] = [
-  { label: 'Gemini 2.5 Flash Lite', value: 'gemini-2.5-flash-lite' },
+  { label: 'Gemini 3.1 Flash Lite', value: 'gemini-3.1-flash-lite-preview' },
   { label: 'Gemini 3 Flash', value: 'gemini-3-flash-preview' },
-  { label: 'Gemini 3 Pro', value: 'gemini-3-pro-preview' },
+  { label: 'Gemini 3.1 Pro', value: 'gemini-3.1-pro-preview' },
 ];
 
 const PixelDotsVisualizer = ({ activeTab }: { activeTab: 'image' | 'audio' }) => {
