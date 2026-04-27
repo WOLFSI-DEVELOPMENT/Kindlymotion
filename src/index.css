@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+body {
+  background-color: black;
+  color: white;
+  margin: 0;
+}
+
+@keyframes smoke {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@utility animate-smoke {
+  background: linear-gradient(-45deg, #18181b, #27272a, #111827, #1f2937);
+  background-size: 400% 400%;
+  animation: smoke 3s ease infinite;
+}
+
+@utility super-pill-full {
+  border-radius: 999px; 
+  corner-shape: squircle; 
+}
+
+@utility super-pill-medium {
+  border-radius: 24px; 
+  corner-shape: squircle; 
+}
+
