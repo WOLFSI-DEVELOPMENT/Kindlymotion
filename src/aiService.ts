@@ -18,6 +18,8 @@ export interface ContextAsset {
   data: string; // base64 string
 }
 
+export type GeminiVideoModel = 'gemini-2.5-flash-lite' | 'gemini-3-flash-preview' | 'gemini-3-pro-preview';
+
 function writeString(view: DataView, offset: number, string: string) {
   for (let i = 0; i < string.length; i++) {
     view.setUint8(offset + i, string.charCodeAt(i));
@@ -67,7 +69,11 @@ function pcmBase64ToWavBase64(pcmBase64: string, sampleRate = 24000, numChannels
   return btoa(binary);
 }
 
-export async function generateVideoScript(prompt: string, contextAssets: ContextAsset[] = []): Promise<GeneratedVideoConfig> {
+export async function generateVideoScript(
+  prompt: string,
+  contextAssets: ContextAsset[] = [],
+  model: GeminiVideoModel = 'gemini-3-flash-preview',
+): Promise<GeneratedVideoConfig> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY environment variable is missing.");
@@ -119,7 +125,7 @@ export async function generateVideoScript(prompt: string, contextAssets: Context
   }
 
   const response = await ai.models.generateContent({
-    model: "gemini-3.1-pro-preview",
+    model,
     contents: aiContent,
     config: {
       temperature: 0,
